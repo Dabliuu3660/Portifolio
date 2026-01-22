@@ -1,13 +1,30 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { IndexedDBProjectRepository } from '@/repositories/IndexedDBProjectRepository';
-import { ProjectFormData } from '@/types/project';
+import { ProjectFormData, Project } from '@/types/project';
+
+// Mock the underlying service
+const mockDb = new Map<string, Project>();
+
+vi.mock('@/services/indexedDbService', () => ({
+    openDB: vi.fn(),
+    getAllProjectsFromDB: vi.fn(async () => Array.from(mockDb.values())),
+    saveProjectToDB: vi.fn(async (project: Project) => {
+        mockDb.set(project.id, project);
+        return project;
+    }),
+    getProjectFromDB: vi.fn(async (id: string) => mockDb.get(id)),
+    deleteProjectFromDB: vi.fn(async (id: string) => {
+        mockDb.delete(id);
+    }),
+}));
 
 describe('IndexedDBProjectRepository', () => {
     let repository: IndexedDBProjectRepository;
 
     beforeEach(() => {
         repository = new IndexedDBProjectRepository();
-        localStorage.clear();
+        mockDb.clear();
+        vi.clearAllMocks();
     });
 
     describe('create', () => {

@@ -2,6 +2,12 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useFileUpload } from '@/components/admin/project-form/hooks/useFileUpload';
 
+vi.mock('@/services/uploadService', () => ({
+    isSupabaseStorageAvailable: () => false,
+    uploadImage: vi.fn(),
+    uploadVideo: vi.fn(),
+}));
+
 describe('useFileUpload', () => {
     beforeEach(() => {
         vi.clearAllMocks();
