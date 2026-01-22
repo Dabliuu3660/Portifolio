@@ -1,0 +1,57 @@
+name: Code Quality Checks
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for large files
+        run: |
+          find src -type f -size +200k -exec ls -lh {} \; | awk '{print $9 ": " $5}' > large-files.txt
+          if [ -s large-files.txt ]; then
+            echo "⚠️ Large files detected:"
+            cat large-files.txt
+            echo "::warning::Large files detected in commit"
+          fi
+
+     - name: Check file line counts
+        run: |
+          find src -name "*.ts" -o -name "*.tsx" | while read file; do
+            lines=$(wc -l < "$file")
+            if [ $lines -gt 200 ]; then
+              echo "::warning file=$file::File has $lines lines (max: 200)"
+            fi
+          done
+
+      - name: Check for TODO/FIXME comments
+        run: |
+          echo "Scanning for TODO/FIXME comments..."
+          grep -rn "TODO\|FIXME" src/ || echo "No TODO/FIXME found ✓"
+
+      - name: Bundle size check
+        run: |
+          npm run build
+          npx @next/bundle-analyzer
+
+      - name: Dependency audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
