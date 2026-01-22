@@ -27,7 +27,7 @@ describe('Validation Schemas', () => {
             const result = projectFormSchema.safeParse(invalidProject);
             expect(result.success).toBe(false);
             if (!result.success) {
-                expect(result.error.errors[0].message).toContain('mínimo 3 caracteres');
+                expect(result.error.issues[0].message).toContain('mínimo 3 caracteres');
             }
         });
 
@@ -107,7 +107,7 @@ describe('Validation Schemas', () => {
             const result = messageFormSchema.safeParse(invalidMessage);
             expect(result.success).toBe(false);
             if (!result.success) {
-                expect(result.error.errors[0].message).toContain('mínimo 10 caracteres');
+                expect(result.error.issues[0].message).toContain('mínimo 10 caracteres');
             }
         });
     });

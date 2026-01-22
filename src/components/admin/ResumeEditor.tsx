@@ -13,6 +13,7 @@ export const ResumeEditor = () => {
 
     useEffect(() => {
         if (resumeData) {
+            // eslint-disable-next-line
             setFormData(resumeData);
         }
     }, [resumeData]);

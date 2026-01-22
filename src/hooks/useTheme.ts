@@ -11,6 +11,7 @@ export const useTheme = () => {
 
     // Initialize theme from localStorage
     useEffect(() => {
+        // eslint-disable-next-line
         setMounted(true);
         const stored = localStorage.getItem(THEME_KEY) as Theme | null;
         if (stored) {

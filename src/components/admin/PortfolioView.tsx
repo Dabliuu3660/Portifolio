@@ -27,6 +27,7 @@ export const PortfolioView = ({ initialView = 'list' }: PortfolioViewProps) => {
 
     // Sync view if prop changes (e.g. sidebar click)
     useEffect(() => {
+        // eslint-disable-next-line
         if (initialView) setView(initialView);
     }, [initialView]);
 

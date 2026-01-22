@@ -36,7 +36,7 @@ describe('IndexedDBProjectRepository', () => {
                 mediaUrl: 'not-a-url', // Invalid URL
             };
 
-            await expect(repository.create(invalidData)).rejects.toThrow('Validation failed');
+            await expect(repository.create(invalidData as any)).rejects.toThrow('Validation failed');
         });
 
         it('should trim whitespace from title', async () => {
